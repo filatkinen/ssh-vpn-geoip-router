@@ -9,7 +9,6 @@ NETMASK="255.255.255.0"
 LOG_SSH_TUNNEL="/var/log/ssh_tunnel.log"
 LOG_SSH_TUNNEL_MONITOR="/var/log/ssh_tunnel_monitor.log"
 
-PID_FILE="/tmp/ssh_tunnel.pid"
 
 PATH_START_TUNNEL="/home/fenych/configs/ssh-tunnel/start_tunnel.sh"
 PATH_MONITOR="/home/fenych/configs/ssh-tunnel/monitor_tunnel.sh"
