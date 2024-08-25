@@ -1,7 +1,8 @@
 #!/bin/bash
 
-exec >/var/log/ssh_tunnel_monitor.log 2>&1
-# Путь до PID файла
+exec > >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >> /var/log/ssh_tunnel_monitor.log) 2>&1
+
+# path to PID file
 PID_FILE="/tmp/ssh_tunnel.pid"
 PATH_START_TUNNEL="/home/fenych/ssh-tunnel/start_tunnel.sh"
 
@@ -20,6 +21,6 @@ if ! ps -p ${SSH_PID} > /dev/null; then
   echo "Tunnel is down, trying put it up"
   "$PATH_START_TUNNEL"
 else
-  echo "Tonnel is working"
+  echo "Tunnel is working"
 fi
 

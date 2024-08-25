@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #send log 
-exec >/var/log/ssh_tunnel.log 2>&1
+exec > >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >> /var/log/ssh_tunnel.log) 2>&1
+
 
 REMOTE_USER="root"
-REMOTE_HOST="hl1.fenych.ru"
+REMOTE_HOST="nl1.fenych.ru"
 REMOTE_PORT="22"
 LOCAL_IP="192.168.150.2"
 REMOTE_IP="192.168.150.1"
