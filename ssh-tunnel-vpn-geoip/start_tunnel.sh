@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#Перенаправляем лог 
+#send log 
 exec >/var/log/ssh_tunnel.log 2>&1
 
-# Параметры подключения
 REMOTE_USER="root"
 REMOTE_HOST="hl1.fenych.ru"
 REMOTE_PORT="22"
@@ -12,7 +11,7 @@ REMOTE_IP="192.168.150.1"
 NETMASK="255.255.255.0"
 
 
-# Поднимаем SSH-туннель
+# stsrting SSH-tunnel
 ssh \
   -o PermitLocalCommand=yes \
   -o LocalCommand="ifconfig tun0 $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
@@ -21,14 +20,14 @@ ssh \
   "ifconfig tun0 $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK; echo tun0 ready"  &
 
 
-# Сохраняем PID процесса SSH для дальнейшего использования
+# Saving PID  SSH 
 echo $! > /tmp/ssh_tunnel.pid
 
 if [ $? -eq 0 ]; then
-    echo "SSH VPN-туннель поднят."
+    echo "SSH VPN- is up."
     exit 0
 else
-    echo "VPN вывалился c ошибкой"
+    echo "VPN down with error"
     exit 1
 fi
 

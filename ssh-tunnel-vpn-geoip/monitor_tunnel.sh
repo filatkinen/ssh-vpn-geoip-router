@@ -5,21 +5,21 @@ exec >/var/log/ssh_tunnel_monitor.log 2>&1
 PID_FILE="/tmp/ssh_tunnel.pid"
 PATH_START_TUNNEL="/home/fenych/ssh-tunnel/start_tunnel.sh"
 
-# Проверяем, существует ли PID файл
+# Check if PID exist
 if [ ! -f ${PID_FILE} ]; then
-  echo "PID файл не найден. Поднимаем тоннель заново."
+  echo "PID not found. Trying one more ."
   "$PATH_START_TUNNEL"
   exit 0
 fi
 
-# Читаем PID процесса SSH
+# Reading PID of SSH
 SSH_PID=$(cat ${PID_FILE})
 
-# Проверяем, работает ли процесс с этим PID
+# Check if prcess with PID is alive
 if ! ps -p ${SSH_PID} > /dev/null; then
-  echo "Тоннель упал. Поднимаем заново."
+  echo "Tunnel is down, trying put it up"
   "$PATH_START_TUNNEL"
 else
-  echo "Тоннель работает."
+  echo "Tonnel is working"
 fi
 
