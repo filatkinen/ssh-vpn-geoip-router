@@ -13,8 +13,8 @@ LOG_SSH_TUNNEL="/var/log/ssh_tunnel.log"
 LOG_SSH_TUNNEL_MONITOR="/var/log/ssh_tunnel_monitor.log"
 
 
-PATH_TUNNEL="/home/fenych/configs/ssh-tunnel/start_tunnel.sh"
-PATH_MONITOR="/home/fenych/configs/ssh-tunnel/monitor_tunnel.sh"
+PATH_TUNNEL="/home/fenych/configs/ssh-tunnel/tunnel.sh"
+PATH_MONITOR="/home/fenych/configs/ssh-tunnel/tunnel_monitor.sh"
 
 
 CRONTAB_JOB='*/5 * * * * root'" $PATH_MONITOR"
