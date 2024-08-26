@@ -8,7 +8,7 @@ source variables.sh
 
 write_log() {
   if [ $USE_LOG = "true" ]; then
-      exec > >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>$LOG_SSH_TUNNEL) 2>&1
+    exec > >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>$LOG_SSH_TUNNEL) 2>&1
   fi
 }
 
@@ -22,7 +22,15 @@ do_start() {
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
     "ifconfig tun0 $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &
-  echo "Tunnel probably was started..."
+
+  sleep 2
+
+  PID=$(ps aux | grep "ssh" | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
+  if kill -0 $PID 2>/dev/null; then
+    echo "Tunnel is UP, PID="$PID
+  else
+    echo "Ups, something wrong... Tunnel is down"
+  fi
 }
 
 do_stop() {

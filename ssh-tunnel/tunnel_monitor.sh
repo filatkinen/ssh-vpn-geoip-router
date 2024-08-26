@@ -13,7 +13,6 @@ write_log() {
 
 do_start() {
     #crotab part
-    echo $CRONTAB_JOB
     if grep -Fxq "$CRONTAB_JOB" $CRONTAB_FILE; then
         echo "job already in $CRONTAB_FILE"
     else
@@ -41,8 +40,6 @@ do_stop() {
     else
         echo "job was not in $CRONTAB_FILE"
     fi
-    $PATH_TUNNEL stop
-
 }
 
 
