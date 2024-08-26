@@ -7,7 +7,7 @@ PID=$(ps aux | grep "ssh" | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}
 
 write_log() {
     if [ $USE_LOG = "true" ]; then
-        exec > >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>$LOG_SSH_TUNNEL_MONITOR) 2>&1
+        exec > >(tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR")) 2>&1
     fi
 }
 
@@ -21,7 +21,7 @@ do_start() {
     fi
 
     if kill -0 $PID 2>/dev/null; then
-        echo "Tunnel is up=" $PID
+        echo "Tunnel is up. PID=" $PID
     else
         echo "Tunnel is down, trying start"
         #deleting tun0 on remote host if it is

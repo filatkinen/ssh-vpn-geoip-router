@@ -7,7 +7,7 @@ LOCAL_IP="192.168.150.2"
 REMOTE_IP="192.168.150.1"
 NETMASK="255.255.255.0"
 
-USE_LOG="false"
+USE_LOG="true"
 
 LOG_SSH_TUNNEL="/var/log/ssh_tunnel.log"
 LOG_SSH_TUNNEL_MONITOR="/var/log/ssh_tunnel_monitor.log"
