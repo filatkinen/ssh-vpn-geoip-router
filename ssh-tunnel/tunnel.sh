@@ -8,7 +8,7 @@ source variables.sh
 
 write_log() {
   if [ $USE_LOG = "true" ]; then
-    exec > >(tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
+    exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
   fi
 }
 
