@@ -9,8 +9,8 @@ LOCAL_IP="192.168.150.2"
 REMOTE_IP="192.168.150.1"
 NETMASK="255.255.255.0"
 
-LOG_SSH_TUNNEL="/var/log/ssh_tunnel.log"
-LOG_SSH_TUNNEL_MONITOR="/var/log/ssh_tunnel_monitor.log"
+LOG_SSH_TUNNEL="/var/log/vpn-geoip.ssh_tunnel.log"
+LOG_SSH_TUNNEL_MONITOR="/var/log/vpn-geoip.ssh_tunnel.monitor.log"
 
 CRONTAB_JOB='*/5 * * * * root'
 CRONTAB_FILE="/etc/crontab"

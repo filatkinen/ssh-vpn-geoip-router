@@ -1,2 +1,1 @@
 # Some ip ranges you want to add to ipset to have full vpn access  (all ports). End list with new line
-

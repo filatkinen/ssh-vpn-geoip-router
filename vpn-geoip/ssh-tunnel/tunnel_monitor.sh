@@ -14,7 +14,7 @@ PATH_MONITOR="$DIR_PATH/tunnel_monitor.sh"
 CRONTAB_JOB="$CRONTAB_JOB $PATH_MONITOR start"
 
 
-PID=$(ps aux | grep "ssh" | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
+PID=$(ps aux | grep "ssh" | grep '-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
 
 write_log() {
     if [ $USE_LOG = "true" ]; then
