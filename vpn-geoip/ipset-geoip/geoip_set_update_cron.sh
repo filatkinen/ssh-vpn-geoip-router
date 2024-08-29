@@ -110,7 +110,7 @@ do_stop() {
   #crotab part -check and dell
   if grep -Fxq "$CRONTAB_JOB" $CRONTAB_FILE; then
     echo "Deleting cron record from $CRONTAB_FILE"
-    cat $CRONTAB_FILE | grep -v $PATH_GEOIP | '^$' >$CRONTAB_FILE_TMP && mv $CRONTAB_FILE_TMP $CRONTAB_FILE
+    cat $CRONTAB_FILE | grep -v $PATH_GEOIP | grep -v '^$' >$CRONTAB_FILE_TMP && mv $CRONTAB_FILE_TMP $CRONTAB_FILE
     service cron reload
   else
     echo "job was not in $CRONTAB_FILE"
