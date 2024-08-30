@@ -17,16 +17,22 @@ get_pid_ssh() {
 
 write_log() {
   if [ $USE_LOG = "true" ]; then
-    exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
+    echo $1 >>$LOG_SSH_TUNNEL 2>&1
   fi
+  # if [ $USE_LOG = "true" ]; then
+  #   exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
+  # fi
 }
 
 write_log_monitor() {
   if [ $USE_LOG = "true" ]; then
-    exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR") 2>&1
-  else
-    exec >/dev/null 2>&1
+    echo $1 >>$LOG_SSH_TUNNEL_MONITOR 2>&1
   fi
+  # if [ $USE_LOG = "true" ]; then
+  #   exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR") 2>&1
+  # else
+  #   exec >/dev/null 2>&1
+  # fi
 }
 
 do_start_tunnel() {
@@ -45,9 +51,9 @@ do_start_tunnel() {
   PID=$(get_pid_ssh)
   #   PID=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
   if kill -0 $PID 2>/dev/null; then
-    echo "Tunnel is UP, PID="$PID
+    write_log "Tunnel is UP, PID=$PID"
   else
-    echo "Ups, something wrong... Tunnel is down"
+    write_log "Ups, something wrong... Tunnel is down"
   fi
 }
 
@@ -57,43 +63,37 @@ do_stop_tunnel() {
   #   PID=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
 
   if kill -0 $PID 2>/dev/null; then
-    echo "Found PID ssh tunnel=" $PID
-    kill $PID
-    echo "Tunnel Stopped "
+    write_log "Found PID ssh tunnel=$PID"
+    kill $PID 
+    write_log "Tunnel Stopped "
 
   else
-    echo "Tunnel is down"
+    write_log "Tunnel is down"
   fi
 }
 
 monitor_ssh_tunnel() {
-  write_log_monitor
+  write_log_monitor "Starting monitor ssh vpn every. Checking every  $TIME_TO_CHECK seconds"
   while true; do
     PID=$(get_pid_ssh)
     if ! kill -0 $PID 2>/dev/null; then
-      echo "Tunnel is DOWN. Trying to UP.."
+      write_log_monitor "Tunnel is DOWN. Trying to UP.."
       do_start_tunnel
-    else
-      echo "Tunnel is UP"
     fi
+    sleep $TIME_TO_CHECK
   done
 }
-
-
-
 
 if [ -z "$1" ]; then
   echo "use: $0 start/stop"
 else
   case $1 in
   start)
-    write_log
     echo "Starting...."
     do_start_tunnel
     monitor_ssh_tunnel &
     ;;
   stop)
-    write_log
     echo "Stopping...."
     pkill -f $TUNNEL_SCRIPT
     do_stop_tunnel
