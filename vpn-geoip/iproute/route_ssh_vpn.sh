@@ -32,13 +32,15 @@ write_memo_logging() {
 
 setup_routing() {
 
-    if  ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
+    if ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
         write_log_monitor "Route probably was not clean correctly. Cleaning"
         cleanup_routing
     fi
 
+    write_log_monitor "Starting setup route"
+
     # Create routing tables
-    ip rule add fwmark 1 table $TABLE_VPN 
+    ip rule add fwmark 1 table $TABLE_VPN
     ip rule add fwmark 2 table $TABLE_WAN
 
     # Set up routes for the tables
@@ -58,17 +60,20 @@ setup_routing() {
 }
 
 cleanup_routing() {
+    
+    write_log_monitor "Cleanup route to default"
 
     ip rule del fwmark 1 table $TABLE_VPN &>/dev/null
     ip rule del fwmark 2 table $TABLE_WAN &>/dev/null
 
-    ip route flush table $TABLE_VPN 
-    ip route flush table $TABLE_WAN 
+    ip route flush table $TABLE_VPN
+    ip route flush table $TABLE_WAN
 
     iptables -t mangle -F PREROUTING
 }
 
 monitor_vpn() {
+    write_log_monitor "Starting monitor route. Checking every  $TIME_TO_CHECK seconds"
     while true; do
         if ping -c 1 -W 2 $REMOTE_IP &>/dev/null; then
             if ! ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
