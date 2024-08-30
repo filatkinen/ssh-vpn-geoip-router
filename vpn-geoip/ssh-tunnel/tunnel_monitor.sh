@@ -14,8 +14,6 @@ PATH_MONITOR="$DIR_PATH/tunnel_monitor.sh"
 CRONTAB_JOB="$CRONTAB_JOB $PATH_MONITOR start"
 
 
-PID=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
-
 write_log() {
     if [ $USE_LOG = "true" ]; then
         exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR")) 2>&1
@@ -31,15 +29,7 @@ do_start() {
         service cron reload
     fi
 
-    if kill -0 $PID 2>/dev/null; then
-        echo "Tunnel is up. PID=" $PID
-    else
-        echo "Tunnel is down, trying start"
-        #deleting tun0 on remote host if it is
-        ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "ip link delete tun0"
-
-        $PATH_TUNNEL start
-    fi
+    $PATH_TUNNEL start
 }
 
 do_stop() {
@@ -51,8 +41,8 @@ do_stop() {
     else
         echo "job was not in $CRONTAB_FILE"
     fi
+    $PATH_TUNNEL stop
 }
-
 
 if [ -z "$1" ]; then
     echo "use: $0 start/stop"
