@@ -6,6 +6,7 @@ VPN="tun0"
 URL_GEOIP_DATA="https://mailfud.org/geoip-legacy/GeoIP-legacy.csv.gz"
 COUNTRY_DIRECT="Russia"
 
+REMOTE_IP="192.168.150.1"
 
 
 

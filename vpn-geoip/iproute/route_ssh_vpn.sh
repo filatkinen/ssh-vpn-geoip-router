@@ -8,19 +8,32 @@ source "$COMMON_DIR_PATH/variables.sh"
 
 ROUTE_SCRIPT=$(basename "$0")
 
-write_log() {
-    if [ $USE_LOG = "true" ]; then
-        exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_IP_ROUTE")) 2>&1
-    fi
+current_date() {
+  echo $(date +"%Y.%m.%d-%H:%M:%S")
 }
 
-write_log_monitor() {
-    if [ $USE_LOG = "true" ]; then
-        exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_IP_ROUTE") 2>&1
-    else
-        exec >/dev/null 2>&1
-    fi
+
+
+write_log() {
+  if [ $USE_LOG = "true" ]; then
+    date=$(current_date)
+    echo "$date $1" >>$LOG_IP_ROUTE 2>&1
+  fi
 }
+
+
+write_log_monitor() {
+  if [ $USE_LOG = "true" ]; then
+    date=$(current_date)
+    echo "$date $1" >>$LOG_IP_ROUTE 2>&1
+  fi
+}
+
+
+write_memo_logging() {
+  echo "Route log is $LOG_IP_ROUTE"
+}
+
 
 setup_routing() {
     # Create routing tables
@@ -55,34 +68,33 @@ cleanup_routing() {
 }
 
 monitor_vpn() {
-    write_log_monitor
     while true; do
-        if ip link show $VPN up &>/dev/null; then
+        if ping -c 1 -W 2 $REMOTE_IP &>/dev/null; then
             if ! ip rule list | grep -q "fwmark 1 table $TABLE_VPN"; then
-                echo "VPN restored. Setting up routing..."
+                write_log_monitor  "VPN restored. Setting up routing..."
                 setup_routing
             fi
         else
-            echo "VPN is down. Switching all traffic to WAN..."
+            write_log_monitor  "VPN is down. Switching all traffic to WAN..."
             cleanup_routing
             ip route add default dev $WAN
-        fi
+        fi 
         sleep $TIME_TO_CHECK
     done
 }
 
 case "$1" in
 start)
-    write_log
     echo "Starting routing..."
     setup_routing
     monitor_vpn &
+    write_memo_logging
     ;;
 stop)
-    write_log
     echo "Stopping routing..."
     pkill -f $ROUTE_SCRIPT
     cleanup_routing
+    write_memo_logging
     ;;
 *)
     echo "Usage: $0 {start|stop}"

@@ -29,9 +29,6 @@ write_log() {
     date=$(current_date)
     echo "$date $1" >>$LOG_SSH_TUNNEL 2>&1
   fi
-  # if [ $USE_LOG = "true" ]; then
-  #   exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
-  # fi
 }
 
 write_log_monitor() {
@@ -39,28 +36,30 @@ write_log_monitor() {
     date=$(current_date)
     echo "$date $1" >>$LOG_SSH_TUNNEL_MONITOR 2>&1
   fi
-  # if [ $USE_LOG = "true" ]; then
-  #   exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR") 2>&1
-  # else
-  #   exec >/dev/null 2>&1
-  # fi
 }
 
 do_start_tunnel() {
+
+  # #delete old interface interface at vpn host
+  # ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
+  #   "if ! ip addr | grep $VPN 2>/dev/null; then
+  #       sudo ip link delete $VPN
+  #   fi"
+
   ssh \
     -o PermitLocalCommand=yes \
     -o ServerAliveInterval=60 \
     -o ServerAliveCountMax=3 \
     -o TCPKeepAlive=yes \
-    -o LocalCommand="ifconfig tun0 $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
+    -o LocalCommand="ifconfig $VPN $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
-    "ifconfig tun0 $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &>$LOG_SSH_TUNNEL &
+    "ifconfig $VPN $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &>>$LOG_SSH_TUNNEL &
 
   sleep 2
 
   PID=$(get_pid_ssh)
-  #   PID=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
+
   if kill -0 $PID 2>/dev/null; then
     write_log "Tunnel is UP, PID=$PID"
   else
@@ -69,9 +68,8 @@ do_start_tunnel() {
 }
 
 do_stop_tunnel() {
-  # Find PID
+
   PID=$(get_pid_ssh)
-  #   PID=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
 
   if kill -0 $PID 2>/dev/null; then
     write_log "Found PID ssh tunnel=$PID"
@@ -84,7 +82,7 @@ do_stop_tunnel() {
 }
 
 monitor_ssh_tunnel() {
-  write_log_monitor "Starting monitor ssh vpn every. Checking every  $TIME_TO_CHECK seconds"
+  write_log_monitor "Starting monitor ssh vpn. Checking every  $TIME_TO_CHECK seconds"
   while true; do
     PID=$(get_pid_ssh)
     if ! kill -0 $PID 2>/dev/null; then
