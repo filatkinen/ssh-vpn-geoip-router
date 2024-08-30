@@ -10,14 +10,24 @@ source "$COMMON_DIR_PATH/variables.sh"
 
 TUNNEL_SCRIPT=$(basename "$0")
 
+current_date() {
+  echo $(date +"%Y.%m.%d-%H:%M:%S")
+}
+
 get_pid_ssh() {
   pid=$(ps aux | grep "ssh" | grep '\-w' | grep ${REMOTE_USER}@${REMOTE_HOST} | awk '{print $2}')
   echo $pid
 }
 
+write_memo_logging() {
+  echo "Tunnel log is $LOG_SSH_TUNNEL"
+  echo "Tunnel monitor log is $LOG_SSH_TUNNEL_MONITOR"
+}
+
 write_log() {
   if [ $USE_LOG = "true" ]; then
-    echo $1 >>$LOG_SSH_TUNNEL 2>&1
+    date=$(current_date)
+    echo "$date $1" >>$LOG_SSH_TUNNEL 2>&1
   fi
   # if [ $USE_LOG = "true" ]; then
   #   exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL")) 2>&1
@@ -26,7 +36,8 @@ write_log() {
 
 write_log_monitor() {
   if [ $USE_LOG = "true" ]; then
-    echo $1 >>$LOG_SSH_TUNNEL_MONITOR 2>&1
+    date=$(current_date)
+    echo "$date $1" >>$LOG_SSH_TUNNEL_MONITOR 2>&1
   fi
   # if [ $USE_LOG = "true" ]; then
   #   exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_SSH_TUNNEL_MONITOR") 2>&1
@@ -44,7 +55,7 @@ do_start_tunnel() {
     -o LocalCommand="ifconfig tun0 $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
-    "ifconfig tun0 $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &
+    "ifconfig tun0 $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &>$LOG_SSH_TUNNEL &
 
   sleep 2
 
@@ -64,7 +75,7 @@ do_stop_tunnel() {
 
   if kill -0 $PID 2>/dev/null; then
     write_log "Found PID ssh tunnel=$PID"
-    kill $PID 
+    kill $PID
     write_log "Tunnel Stopped "
 
   else
@@ -92,11 +103,13 @@ else
     echo "Starting...."
     do_start_tunnel
     monitor_ssh_tunnel &
+    write_memo_logging
     ;;
   stop)
     echo "Stopping...."
     pkill -f $TUNNEL_SCRIPT
     do_stop_tunnel
+    write_memo_logging
     ;;
   *)
     echo "Unknown parameter: $1. Please Use: $0 start/stop"
