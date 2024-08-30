@@ -92,6 +92,15 @@ monitor_ssh_tunnel() {
   done
 }
 
+cleanup() {
+  echo "Interrupted(stop), so clean up"
+  do_stop_tunnel
+  exit 0
+}
+
+trap cleanup SIGTERM
+
+
 if [ -z "$1" ]; then
   echo "use: $0 start/stop"
 else
@@ -104,9 +113,9 @@ else
     ;;
   stop)
     echo "Stopping...."
-    pkill -f $TUNNEL_SCRIPT
     do_stop_tunnel
     write_memo_logging
+    pkill -f $TUNNEL_SCRIPT
     ;;
   *)
     echo "Unknown parameter: $1. Please Use: $0 start/stop"

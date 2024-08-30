@@ -70,7 +70,7 @@ cleanup_routing() {
 monitor_vpn() {
     while true; do
         if ping -c 1 -W 2 $REMOTE_IP &>/dev/null; then
-            if ! ip rule list | grep -q "fwmark 1 table $TABLE_VPN"; then
+            if ! ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
                 write_log_monitor  "VPN restored. Setting up routing..."
                 setup_routing
             fi
@@ -83,6 +83,16 @@ monitor_vpn() {
     done
 }
 
+cleanup() {
+  echo "Interrupted(stop), so clean up"
+  cleanup_routing
+  exit 0
+}
+
+trap cleanup SIGTERM
+
+
+
 case "$1" in
 start)
     echo "Starting routing..."
@@ -92,9 +102,9 @@ start)
     ;;
 stop)
     echo "Stopping routing..."
-    pkill -f $ROUTE_SCRIPT
     cleanup_routing
     write_memo_logging
+    pkill -f $ROUTE_SCRIPT
     ;;
 *)
     echo "Usage: $0 {start|stop}"
