@@ -20,8 +20,7 @@ get_pid_ssh() {
 }
 
 write_memo_logging() {
-  echo "Tunnel log is $LOG_SSH_TUNNEL"
-  echo "Tunnel monitor log is $LOG_SSH_TUNNEL_MONITOR"
+  echo "Tunnel log here: $LOG_SSH_TUNNEL"
 }
 
 write_log() {
@@ -34,7 +33,7 @@ write_log() {
 write_log_monitor() {
   if [ $USE_LOG = "true" ]; then
     date=$(current_date)
-    echo "$date $1" >>$LOG_SSH_TUNNEL_MONITOR 2>&1
+    echo "$date $1" >>$LOG_SSH_TUNNEL 2>&1
   fi
 }
 
