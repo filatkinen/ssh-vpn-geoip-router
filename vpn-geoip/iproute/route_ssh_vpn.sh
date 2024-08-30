@@ -9,35 +9,36 @@ source "$COMMON_DIR_PATH/variables.sh"
 ROUTE_SCRIPT=$(basename "$0")
 
 current_date() {
-  echo $(date +"%Y.%m.%d-%H:%M:%S")
+    echo $(date +"%Y.%m.%d-%H:%M:%S")
 }
-
-
 
 write_log() {
-  if [ $USE_LOG = "true" ]; then
-    date=$(current_date)
-    echo "$date $1" >>$LOG_IP_ROUTE 2>&1
-  fi
+    if [ $USE_LOG = "true" ]; then
+        date=$(current_date)
+        echo "$date $1" >>$LOG_IP_ROUTE 2>&1
+    fi
 }
-
 
 write_log_monitor() {
-  if [ $USE_LOG = "true" ]; then
-    date=$(current_date)
-    echo "$date $1" >>$LOG_IP_ROUTE 2>&1
-  fi
+    if [ $USE_LOG = "true" ]; then
+        date=$(current_date)
+        echo "$date $1" >>$LOG_IP_ROUTE 2>&1
+    fi
 }
-
 
 write_memo_logging() {
-  echo "Route log is $LOG_IP_ROUTE"
+    echo "Route log is $LOG_IP_ROUTE"
 }
 
-
 setup_routing() {
+
+    if  ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
+        write_log_monitor "Route probably was not clean correctly. Cleaning"
+        cleanup_routing
+    fi
+
     # Create routing tables
-    ip rule add fwmark 1 table $TABLE_VPN
+    ip rule add fwmark 1 table $TABLE_VPN 
     ip rule add fwmark 2 table $TABLE_WAN
 
     # Set up routes for the tables
@@ -58,11 +59,11 @@ setup_routing() {
 
 cleanup_routing() {
 
-    ip rule del fwmark 1 table $TABLE_VPN
-    ip rule del fwmark 2 table $TABLE_WAN
+    ip rule del fwmark 1 table $TABLE_VPN &>/dev/null
+    ip rule del fwmark 2 table $TABLE_WAN &>/dev/null
 
-    ip route flush table $TABLE_VPN
-    ip route flush table $TABLE_WAN
+    ip route flush table $TABLE_VPN 
+    ip route flush table $TABLE_WAN 
 
     iptables -t mangle -F PREROUTING
 }
@@ -71,27 +72,25 @@ monitor_vpn() {
     while true; do
         if ping -c 1 -W 2 $REMOTE_IP &>/dev/null; then
             if ! ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
-                write_log_monitor  "VPN restored. Setting up routing..."
+                write_log_monitor "VPN restored. Setting up routing..."
                 setup_routing
             fi
         else
-            write_log_monitor  "VPN is down. Switching all traffic to WAN..."
+            write_log_monitor "VPN is down. Switching all traffic to WAN..."
             cleanup_routing
             ip route add default dev $WAN
-        fi 
+        fi
         sleep $TIME_TO_CHECK
     done
 }
 
 cleanup() {
-  echo "Interrupted(stop), so clean up"
-  cleanup_routing
-  exit 0
+    echo "Interrupted(stop), so clean up"
+    cleanup_routing
+    exit 0
 }
 
 trap cleanup SIGTERM
-
-
 
 case "$1" in
 start)
