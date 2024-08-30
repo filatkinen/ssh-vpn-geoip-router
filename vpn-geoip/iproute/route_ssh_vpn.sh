@@ -1,21 +1,25 @@
 #!/bin/bash
 
-
 DIR_PATH=$(dirname "$(realpath "$0")")
 source "$DIR_PATH/variables.sh"
 
 COMMON_DIR_PATH=$(dirname "$DIR_PATH")
 source "$COMMON_DIR_PATH/variables.sh"
 
-
-TABLE_VPN=100
-TABLE_WAN=200
-
+ROUTE_SCRIPT=$(basename "$0")
 
 write_log() {
-  if [ $USE_LOG = "true" ]; then
-    exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_IP_ROUTE")) 2>&1
-  fi
+    if [ $USE_LOG = "true" ]; then
+        exec > >(stdbuf -oL tee >(awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_IP_ROUTE")) 2>&1
+    fi
+}
+
+write_log_monitor() {
+    if [ $USE_LOG = "true" ]; then
+        exec > >(stdbuf -oL awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }' >>"$LOG_IP_ROUTE") 2>&1
+    else
+        exec >/dev/null 2>&1
+    fi
 }
 
 setup_routing() {
@@ -39,22 +43,19 @@ setup_routing() {
     iptables -t mangle -A PREROUTING -j MARK --set-mark 2
 }
 
-
 cleanup_routing() {
-    
+
     ip rule del fwmark 1 table $TABLE_VPN
     ip rule del fwmark 2 table $TABLE_WAN
 
-   
     ip route flush table $TABLE_VPN
     ip route flush table $TABLE_WAN
 
-    
     iptables -t mangle -F PREROUTING
 }
 
-
 monitor_vpn() {
+    write_log_monitor
     while true; do
         if ip link show $VPN up &>/dev/null; then
             if ! ip rule list | grep -q "fwmark 1 table $TABLE_VPN"; then
@@ -66,26 +67,25 @@ monitor_vpn() {
             cleanup_routing
             ip route add default dev $WAN
         fi
-        sleep 10
+        sleep $TIME_TO_CHECK
     done
 }
 
-
 case "$1" in
-    start)
-        write_log
-        echo "Starting routing..."
-        setup_routing
-        monitor_vpn &
-        ;;
-    stop)
-        write_log
-        echo "Stopping routing..."
-        pkill -f monitor_vpn
-        cleanup_routing
-        ;;
-    *)
-        echo "Usage: $0 {start|stop}"
-        exit 1
-        ;;
+start)
+    write_log
+    echo "Starting routing..."
+    setup_routing
+    monitor_vpn &
+    ;;
+stop)
+    write_log
+    echo "Stopping routing..."
+    pkill -f $ROUTE_SCRIPT
+    cleanup_routing
+    ;;
+*)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
 esac
