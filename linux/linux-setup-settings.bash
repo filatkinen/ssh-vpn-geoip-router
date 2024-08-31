@@ -66,6 +66,11 @@ sed -i "/$USER_REMOTE/s|/bin/sh|/bin/bash|" /etc/passwd
 
 passwd ${USER_REMOTE}
 
+
+sed -i 's/\\h/\\H/' ~/.bashrc
+#sed -i 's/\\h/\\H/' /etc/bash.bashrc
+source ~/.bashrc
+
 #--------------------------------------------------
 #копируем свой ключ
 # ssh-copy-id USERNAME@имя сервера/адрес

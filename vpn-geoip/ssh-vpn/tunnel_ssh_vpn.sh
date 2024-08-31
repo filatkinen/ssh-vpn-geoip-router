@@ -39,11 +39,11 @@ write_log_monitor() {
 
 do_start_tunnel() {
 
-  # #delete old interface interface at vpn host
-  # ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
-  #   "if ! ip addr | grep $VPN 2>/dev/null; then
-  #       sudo ip link delete $VPN
-  #   fi"
+  #delete old interface interface at vpn host
+  ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
+    "if ip addr | grep $VPN &>/dev/null; then
+        sudo ip link delete $VPN
+    fi"
 
   ssh \
     -o PermitLocalCommand=yes \
