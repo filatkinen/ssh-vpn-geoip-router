@@ -26,7 +26,7 @@ write_log_monitor() {
     fi
 }
 
-write_memip ruleo_logging() {
+write_memo_logging() {
     echo "Route log is $LOG_IP_ROUTE"
 }
 
@@ -78,7 +78,7 @@ setup_routing() {
     # iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # VPN for packets not in direct list and dport=80,443  - all web traf
-    iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
+    iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
     iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # All other packets go through WAN - direct
