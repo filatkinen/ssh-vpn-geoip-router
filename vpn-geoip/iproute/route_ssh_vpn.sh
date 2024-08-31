@@ -70,16 +70,12 @@ setup_routing() {
     iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
 
 
-    iptables -t mangle -A PREROUTING -m set --match-set $IPSET_DIRECT dst -j MARK --set-mark 2 
-    iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
-
-    # VPN additional
     iptables -t mangle -A PREROUTING -m set --match-set $IPSET_VPN_ADDITIONAL dst -j MARK --set-mark 1
-    # iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # VPN for packets not in direct list and dport=80,443  - all web traf
-    iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
-    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+    # iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
+    # iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # All other packets go through WAN - direct
     iptables -t mangle -A PREROUTING -j MARK --set-mark 2
