@@ -63,6 +63,7 @@ iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -
 ```
 └── 📁linux-vds-vpn-server
     └── 📁squid
+        └── squid.add_user.sh (Скрипт добавления пользователя)
         └── squid.conf.sh (Дополнительно можно настроить squid)
         └── variables.sh
     └── linux-vds-vpn-server-setup.bash (Первоначальная настройка VPN-сервера)

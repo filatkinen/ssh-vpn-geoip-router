@@ -10,6 +10,7 @@ source "$DIR_PATH/variables.sh"
 apt-get update -y
 apt-get upgrade -y
 apt install net-tools -y
+apt install iptables -y
 
 apt remove ufw -y
 
@@ -29,7 +30,7 @@ iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 # iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 3128 -j ACCEPT #if you want proxy additional
 # iptables -A INPUT -p gre -j ACCEPT
-iptables -t nat -A POSTROUTING -o eth0 -s 192.168.0.0/16 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o $INTERFACE -s 192.168.0.0/16 -j MASQUERADE
 
 iptables -A FORWARD -i tun+ -o $INTERFACE -j ACCEPT
 iptables -A FORWARD -i $INTERFACE -o tun+ -m state --state RELATED,ESTABLISHED -j ACCEPT

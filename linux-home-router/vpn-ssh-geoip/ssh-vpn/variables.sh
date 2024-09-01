@@ -3,10 +3,10 @@ set -o noglob
 USE_LOG="true"
 
 REMOTE_USER="root"
-REMOTE_HOST="bg.fenych.ru"
+REMOTE_HOST="FQDN-SERVER-HERE"
 REMOTE_PORT="22"
 
-NETMASK="255.255.255.0"
+
 
 LOG_SSH_TUNNEL="/var/log/vpn-geoip.ssh_tunnel.log"
 
