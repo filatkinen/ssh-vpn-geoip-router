@@ -1,6 +1,5 @@
 USE_LOG="true"
 
-TABLE_VPN=100
 TABLE_WAN=200
 
 #checking route every seconds 

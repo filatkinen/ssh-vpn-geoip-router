@@ -3,14 +3,16 @@ set -o noglob
 WAN="eth0"  
 VPN="tun0"  
 
-URL_GEOIP_DATA="https://mailfud.org/geoip-legacy/GeoIP-legacy.csv.gz"
-COUNTRY_DIRECT="Russia"
 
 VPN_REMOTE_IP="192.168.150.1"
 VPN_LOCAL_IP="192.168.150.2"
+VPN_NETMASK="255.255.255.0"
 
 
 
+
+URL_GEOIP_DATA="https://mailfud.org/geoip-legacy/GeoIP-legacy.csv.gz"
+COUNTRY_DIRECT="Russia"
 
 
 # Probably you do not need change anything here

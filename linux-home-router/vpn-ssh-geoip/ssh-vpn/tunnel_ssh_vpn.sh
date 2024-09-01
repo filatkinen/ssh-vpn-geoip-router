@@ -50,11 +50,10 @@ do_start_tunnel() {
     -o ServerAliveInterval=60 \
     -o ServerAliveCountMax=3 \
     -o TCPKeepAlive=yes \
-    -o LocalCommand="ifconfig $VPN $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
+    -o LocalCommand="ifconfig $VPN $VPN_LOCAL_IP pointopoint $VPN_REMOTE_IP netmask $VPN_NETMASK" \
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
-    "ip addr add $VPN_REMOTE_IP peer $VPN_LOCAL_IP dev $VPN; ip link set $VPN up" &>>$LOG_SSH_TUNNEL &
-    # "ifconfig $VPN $VPN_REMOTE_IP pointopoint $VPN_LOCAL_IP netmask $NETMASK" &>>$LOG_SSH_TUNNEL &
+     "ifconfig $VPN $VPN_REMOTE_IP pointopoint $VPN_LOCAL_IP netmask $VPN_NETMASK" &>>$LOG_SSH_TUNNEL &
 
   sleep 2
 
