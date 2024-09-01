@@ -44,7 +44,7 @@ setup_routing() {
     ip rule add fwmark 2 table $TABLE_WAN
 
     # Set up routes for the tables
-    ip route add default dev $VPN table $TABLE_VPN
+    ip route add default via $REMOTE_IP dev $VPN table $TABLE_VPN
     ip route add default dev $WAN table $TABLE_WAN
 
     # # Mark packets for routing
@@ -74,8 +74,8 @@ setup_routing() {
     iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # VPN for packets not in direct list and dport=80,443  - all web traf
-    # iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
-    # iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+    iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
+    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # All other packets go through WAN - direct
     iptables -t mangle -A PREROUTING -j MARK --set-mark 2
@@ -90,8 +90,8 @@ cleanup_routing() {
     ip rule del fwmark 1 table $TABLE_VPN &>/dev/null
     ip rule del fwmark 2 table $TABLE_WAN &>/dev/null
 
-    ip route flush table $TABLE_VPN
-    ip route flush table $TABLE_WAN
+    ip route flush table $TABLE_VPN &>/dev/null
+    ip route flush table $TABLE_WAN &>/dev/null
 
     iptables -t mangle -F PREROUTING
 }

@@ -5,6 +5,7 @@ USER_REMOTE="fenych"
 
 apt-get update -y
 apt-get upgrade -y
+apt install net-tools -y
 
 apt remove ufw -y
 
@@ -40,10 +41,6 @@ apt install git -y
 sed -i '/^#.*net.ipv4.ip_forward=1/s/^#//' /etc/sysctl.conf
 
 # Tur off ipv6
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-
 
 sysctl -p
 
