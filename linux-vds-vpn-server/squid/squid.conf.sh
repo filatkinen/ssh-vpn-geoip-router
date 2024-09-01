@@ -14,7 +14,7 @@ apt-get install apache2-utils -y
 
 
 
-#uncoment include
+#uncoment include if commented
 sed -i 's/^#\(include \/etc\/squid\/conf.d\/\*\.conf\)/\1/' /etc/squid/squid.conf
 
 #add auth digest
@@ -34,7 +34,7 @@ EOL
 htdigest -c /etc/squid/passwd_digest $REALM  $USERNAME1
 
 #then add some users:
-#htdigest  /etc/squid/passwd_digest fenych.ru  username2
+#htdigest  /etc/squid/passwd_digest  $REALM username2
 
 
 systemctl enable squid

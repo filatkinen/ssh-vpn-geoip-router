@@ -53,7 +53,8 @@ do_start_tunnel() {
     -o LocalCommand="ifconfig $VPN $LOCAL_IP pointopoint $REMOTE_IP netmask $NETMASK" \
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
-    "ifconfig $VPN $REMOTE_IP pointopoint $LOCAL_IP netmask $NETMASK" &>>$LOG_SSH_TUNNEL &
+    "ip addr add $VPN_REMOTE_IP peer $VPN_LOCAL_IP dev $VPN; ip link set $VPN up" &>>$LOG_SSH_TUNNEL &
+    # "ifconfig $VPN $VPN_REMOTE_IP pointopoint $VPN_LOCAL_IP netmask $NETMASK" &>>$LOG_SSH_TUNNEL &
 
   sleep 2
 
@@ -73,8 +74,7 @@ do_stop_tunnel() {
   if kill -0 $PID 2>/dev/null; then
     write_log "Found PID ssh tunnel=$PID"
     kill $PID
-    write_log "Tunnel Stopped "
-
+    write_log "Tunnel Stopped"
   else
     write_log "Tunnel is down"
   fi
