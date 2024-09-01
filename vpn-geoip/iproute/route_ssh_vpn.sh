@@ -41,11 +41,11 @@ setup_routing() {
 
     # Create routing tables
     ip rule add fwmark 1 table $TABLE_VPN
-    ip rule add fwmark 2 table $TABLE_WAN
+    # ip rule add fwmark 2 table $TABLE_WAN
 
     # Set up routes for the tables
     ip route add default via $REMOTE_IP dev $VPN table $TABLE_VPN
-    ip route add default dev $WAN table $TABLE_WAN
+    # ip route add default dev $WAN table $TABLE_WAN
 
     # # Mark packets for routing
     # iptables -t mangle -A PREROUTING -m set --match-set $IPSET_DIRECT dst -j MARK --set-mark 2
@@ -60,14 +60,14 @@ setup_routing() {
 
 
     #DNS direct - you can comment 
-    iptables -t mangle -A PREROUTING -p tcp --dport 53 -j MARK --set-mark 2 
-    iptables -t mangle -A PREROUTING -p udp --dport 53 -j MARK --set-mark 2 
-    iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
+    # iptables -t mangle -A PREROUTING -p tcp --dport 53 -j MARK --set-mark 2 
+    # iptables -t mangle -A PREROUTING -p udp --dport 53 -j MARK --set-mark 2 
+    # iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
 
 
-    # Direct
-    iptables -t mangle -A PREROUTING -m set --match-set $IPSET_DIRECT dst -j MARK --set-mark 2 
-    iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
+    # # Direct
+    # iptables -t mangle -A PREROUTING -m set --match-set $IPSET_DIRECT dst -j MARK --set-mark 2 
+    # iptables -t mangle -A PREROUTING -m mark --mark 2 -j RETURN
 
 
     iptables -t mangle -A PREROUTING -m set --match-set $IPSET_VPN_ADDITIONAL dst -j MARK --set-mark 1
@@ -77,8 +77,8 @@ setup_routing() {
     iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
     iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
-    # All other packets go through WAN - direct
-    iptables -t mangle -A PREROUTING -j MARK --set-mark 2
+    # # All other packets go through WAN - direct
+    # iptables -t mangle -A PREROUTING -j MARK --set-mark 2
 
     ip route flush cache
 }
@@ -88,10 +88,10 @@ cleanup_routing() {
     write_log_monitor "Cleanup route to default"
 
     ip rule del fwmark 1 table $TABLE_VPN &>/dev/null
-    ip rule del fwmark 2 table $TABLE_WAN &>/dev/null
+    # ip rule del fwmark 2 table $TABLE_WAN &>/dev/null
 
     ip route flush table $TABLE_VPN &>/dev/null
-    ip route flush table $TABLE_WAN &>/dev/null
+    # ip route flush table $TABLE_WAN &>/dev/null
 
     iptables -t mangle -F PREROUTING
 }

@@ -37,6 +37,7 @@ apt install mc -y
 apt install git -y
 
 
+
 #uncomment net.ipv4.ip_forward=1
 sed -i '/^#.*net.ipv4.ip_forward=1/s/^#//' /etc/sysctl.conf
 

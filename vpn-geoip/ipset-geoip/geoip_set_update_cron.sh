@@ -55,7 +55,7 @@ set_ip_sets() {
   echo "Loading geoip into the ipset. Number of records =" $(wc -l <$FILE_DIRECT)
   # load to ipset geo file
   count=0
-  while IFS=',' read -r ip_range _; d
+  while IFS=',' read -r ip_range _; do
     
     # command to ipset
     ipset add -exist $IPSET_DIRECT_LOAD $ip_range
