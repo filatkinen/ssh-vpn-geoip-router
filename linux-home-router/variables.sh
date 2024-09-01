@@ -1,4 +1,4 @@
 
 USER_ADD="someuser"
 INTERFACE_WAN="eth0"
-INTERFACE_LOCAL="eth1"
+INTERFACE_LAN="eth1"

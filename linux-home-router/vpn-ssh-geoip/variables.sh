@@ -12,6 +12,8 @@ VPN_NETMASK="255.255.255.0"
 
 
 URL_GEOIP_DATA="https://mailfud.org/geoip-legacy/GeoIP-legacy.csv.gz"
+
+#Filter lines in file by Country name:
 COUNTRY_DIRECT="Russia"
 
 

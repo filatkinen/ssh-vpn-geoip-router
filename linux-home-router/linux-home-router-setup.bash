@@ -8,11 +8,13 @@ source "$DIR_PATH/variables.sh"
 apt-get update -y 
 apt-get upgrade -y
 apt install net-tools -y
+apt install iptables -y
 
 apt remove ufw -y
 
 iptables -F
 iptables -t mangle -F
+iptables -t nat -F
 iptables -t raw -F
 iptables -Z
 iptables -X
@@ -30,7 +32,7 @@ iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 iptables -t nat -A POSTROUTING -o $INTERFACE_WAN -s 192.168.0.0/16 -j MASQUERADE
 iptables -t nat -A POSTROUTING -o tun+ -s 192.168.0.0/16 -j MASQUERADE
 
-iptables -A FORWARD -i $INTERFACE_LOCAL -j ACCEPT
+iptables -A FORWARD -i $INTERFACE_LAN -j ACCEPT
 iptables -A FORWARD -i $INTERFACE_WAN -o $INTERFACE_LAN -m state --state RELATED,ESTABLISHED  -j ACCEPT
 iptables -A FORWARD -i tun+ -o $INTERFACE_LAN -m state --state RELATED,ESTABLISHED  -j ACCEPT
 

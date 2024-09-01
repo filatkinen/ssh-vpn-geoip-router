@@ -16,6 +16,7 @@ apt remove ufw -y
 
 iptables -F
 iptables -t mangle -F
+iptables -t nat -F
 iptables -t raw -F
 iptables -Z
 iptables -X

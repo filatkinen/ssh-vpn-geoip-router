@@ -41,7 +41,6 @@ setup_routing() {
 
     # Create routing tables
     ip rule add fwmark 1 table $TABLE_VPN
-    # ip rule add fwmark 2 table $TABLE_WAN
 
     # Set up routes for the tables
     ip route add default via $VPN_REMOTE_IP dev $VPN table $TABLE_VPN
@@ -71,7 +70,7 @@ cleanup_routing() {
 monitor_vpn() {
     write_log_monitor "Starting monitor route. Checking every  $TIME_TO_CHECK seconds"
     while true; do
-        if ping -c 1 -W 2 $REMOTE_IP &>/dev/null; then
+        if ping -c 1 -W 2 $VPN_REMOTE_IP &>/dev/null; then
             if ! ip rule list | grep -q "fwmark 0x1 lookup $TABLE_VPN"; then
                 write_log_monitor "VPN restored. Setting up routing..."
                 setup_routing
@@ -79,7 +78,6 @@ monitor_vpn() {
         else
             write_log_monitor "VPN is down. Switching all traffic to WAN..."
             cleanup_routing
-            ip route add default dev $WAN &>>$LOG_IP_ROUTE
         fi
         sleep $TIME_TO_CHECK
     done
