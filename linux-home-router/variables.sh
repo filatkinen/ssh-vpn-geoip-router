@@ -2,4 +2,3 @@
 USER_ADD="someuser"
 INTERFACE_WAN="eth0"
 INTERFACE_LOCAL="eth1"
-VPN="tun0"

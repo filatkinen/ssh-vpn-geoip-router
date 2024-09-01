@@ -62,8 +62,8 @@ cleanup_routing() {
     
     write_log_monitor "Cleanup route to default"
 
-    ip rule del fwmark 1 table $TABLE_VPN &>/dev/null
-    ip route flush table $TABLE_VPN &>/dev/null
+    ip rule del fwmark 1 table $TABLE_VPN &>>$LOG_IP_ROUTE
+    ip route flush table $TABLE_VPN &>>$LOG_IP_ROUTE
 
     iptables -t mangle -F PREROUTING
 }
@@ -79,7 +79,7 @@ monitor_vpn() {
         else
             write_log_monitor "VPN is down. Switching all traffic to WAN..."
             cleanup_routing
-            ip route add default dev $WAN &>/dev/null
+            ip route add default dev $WAN &>>$LOG_IP_ROUTE
         fi
         sleep $TIME_TO_CHECK
     done
