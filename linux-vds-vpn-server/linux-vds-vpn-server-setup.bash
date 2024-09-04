@@ -52,6 +52,11 @@ apt install git -y
 #uncomment net.ipv4.ip_forward=1
 sed -i '/^#.*net.ipv4.ip_forward=1/s/^#//' /etc/sysctl.conf
 
+#disaeble ipv6 - DO NOT FOGET REBOOT - all services need to load without ipv6(to many messages in logs) 
+sudo sed -i '$a\net.ipv6.conf.all.disable_ipv6 = 1' /etc/sysctl.conf
+sudo sed -i '$a\net.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
+sudo sed -i '$a\net.ipv6.conf.lo.disable_ipv6 = 1' /etc/sysctl.conf
+
 sysctl -p
 
 
