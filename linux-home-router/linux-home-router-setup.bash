@@ -20,15 +20,11 @@ iptables -Z
 iptables -X
 
 iptables -A INPUT -i tun+ -j ACCEPT
-# iptables -A INPUT -i ppp+ -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT -p icmp  -j ACCEPT
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
-# iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-# iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-# iptables -A INPUT -p tcp -m tcp --dport 3128 -j ACCEPT
-# iptables -A INPUT -p gre -j ACCEPT
+
 iptables -t nat -A POSTROUTING -o $INTERFACE_WAN -s 192.168.0.0/16 -j MASQUERADE
 iptables -t nat -A POSTROUTING -o tun+ -s 192.168.0.0/16 -j MASQUERADE
 
