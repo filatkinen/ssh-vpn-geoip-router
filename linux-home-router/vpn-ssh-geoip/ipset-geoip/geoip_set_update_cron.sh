@@ -89,6 +89,8 @@ set_ip_sets() {
   # finally swap ipsets vpn additional
   ipset swap $IPSET_VPN_ADDITIONAL $IPSET_VPN_ADDITIONAL_LOAD
 
+  ipset save > /etc/ipset.conf
+
   echo "Finish updating ip sets"
 }
 
