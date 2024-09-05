@@ -77,6 +77,7 @@ iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -
 1. Аренда VDS и залогиниться туда по ssh. Нужна root-сессия (sudo -s или какой другой способ)
 2. Клонируем репозиторий.
 ```
+apt update
 apt install git
 git clone https://github.com/filatkinen/ssh-vpn-geoip-router
 ```
@@ -87,6 +88,7 @@ git clone https://github.com/filatkinen/ssh-vpn-geoip-router
 #### linux-home-router
 1. 
 ```
+apt update
 apt install git
 git clone https://github.com/filatkinen/ssh-vpn-geoip-router
 ```
