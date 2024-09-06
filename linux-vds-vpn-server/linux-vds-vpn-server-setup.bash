@@ -62,6 +62,15 @@ sudo sed -i '$a\net.ipv6.conf.lo.disable_ipv6 = 1' /etc/sysctl.conf
 sysctl -p
 
 
+#settings for disaeble ipv6 on sturtup.
+if grep -q "exit 0" "/etc/rc.local"; then
+    # add sysctl -p  exit 0
+    sed -i '/exit 0/i\sysctl -p' "/etc/rc.local"
+else
+    # or adding sysctl -p to the end of file
+    echo "sysctl -p" >>"/etc/rc.local"
+fi
+
 #Setting for sshd
 sed -i '/^#\?ClientAliveInterval/c\ClientAliveInterval 36000' /etc/ssh/sshd_config
 sed -i '/^#\?ClientAliveCountMax/c\ClientAliveCountMax 10' /etc/ssh/sshd_config
