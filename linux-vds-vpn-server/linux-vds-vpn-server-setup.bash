@@ -44,32 +44,17 @@ apt install iptables-persistent -y
 netfilter-persistent save
 
 apt install mc -y
-apt install git -y
 
 
 
 #uncomment net.ipv4.ip_forward=1
 sed -i '/^#.*net.ipv4.ip_forward=1/s/^#//' /etc/sysctl.conf
+sysctl -p
 
 #connections with ipv4
 sed -i '$ a precedence ::ffff:0:0/96  100' /etc/gai.conf
 
-#disaeble ipv6 - DO NOT FOGET REBOOT - all services need to load without ipv6(to many messages in logs) 
-sudo sed -i '$a\net.ipv6.conf.all.disable_ipv6 = 1' /etc/sysctl.conf
-sudo sed -i '$a\net.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
-sudo sed -i '$a\net.ipv6.conf.lo.disable_ipv6 = 1' /etc/sysctl.conf
 
-sysctl -p
-
-
-#settings for disaeble ipv6 on sturtup.
-if grep -q "exit 0" "/etc/rc.local"; then
-    # add sysctl -p  exit 0
-    sed -i '/exit 0/i\sysctl -p' "/etc/rc.local"
-else
-    # or adding sysctl -p to the end of file
-    echo "sysctl -p" >>"/etc/rc.local"
-fi
 
 #Setting for sshd
 sed -i '/^#\?ClientAliveInterval/c\ClientAliveInterval 36000' /etc/ssh/sshd_config

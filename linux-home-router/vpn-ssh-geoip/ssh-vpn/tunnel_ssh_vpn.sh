@@ -42,8 +42,13 @@ do_start_tunnel() {
   #delete old interface interface at vpn host
   ssh -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} \
     "if ip addr | grep $VPN &>/dev/null; then
-        sudo ip link delete $VPN
+        ip link delete $VPN
     fi"
+
+  #delete old interface interface at router host
+  if ip addr | grep $VPN &>/dev/null; then
+    ip link delete $VPN
+  fi
 
   ssh \
     -o PermitLocalCommand=yes \
@@ -53,7 +58,7 @@ do_start_tunnel() {
     -o LocalCommand="ifconfig $VPN $VPN_LOCAL_IP pointopoint $VPN_REMOTE_IP netmask $VPN_NETMASK" \
     -p ${REMOTE_PORT} \
     -w 0:0 ${REMOTE_USER}@${REMOTE_HOST} \
-     "ifconfig $VPN $VPN_REMOTE_IP pointopoint $VPN_LOCAL_IP netmask $VPN_NETMASK" &>>$LOG_SSH_TUNNEL &
+    "ifconfig $VPN $VPN_REMOTE_IP pointopoint $VPN_LOCAL_IP netmask $VPN_NETMASK" &>>$LOG_SSH_TUNNEL &
 
   sleep 2
 
@@ -78,7 +83,6 @@ do_stop_tunnel() {
     write_log "Tunnel is down"
   fi
 
-  ip link delete $VPN
 }
 
 monitor_ssh_tunnel() {
@@ -100,7 +104,6 @@ cleanup() {
 }
 
 trap cleanup SIGTERM
-
 
 if [ -z "$1" ]; then
   echo "use: $0 start/stop"
