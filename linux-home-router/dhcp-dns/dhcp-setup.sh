@@ -8,12 +8,12 @@ source "$DIR_PATH/variables.sh"
 COMMON_DIR_PATH=$(dirname "$DIR_PATH")
 source "$COMMON_DIR_PATH/variables.sh"
 
-$NODHCP="no-dhcp-interface=$INTERFACE_LAN"
+NODHCP="no-dhcp-interface=$INTERFACE_WAN"
 CONFIG_BLOCK=${CONFIG_BLOCK}${NODHCP}
 
 
 
-echo "$CONFIG_BLOCK" >> /etc/dnsmasq.d/router.conf
+echo "$CONFIG_BLOCK" > /etc/dnsmasq.d/router.conf
 
 
 #Example static lease 
