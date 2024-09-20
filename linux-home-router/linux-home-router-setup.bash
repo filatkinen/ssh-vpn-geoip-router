@@ -18,8 +18,9 @@ iptables -t raw -F
 iptables -Z
 iptables -X
 
-iptables -A INPUT -i tun+ -j ACCEPT
+iptables -A INPUT -i $INTERFACE_LAN -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -i tun+ -j ACCEPT
 iptables -A INPUT -p icmp -j ACCEPT
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT

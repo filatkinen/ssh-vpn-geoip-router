@@ -77,6 +77,8 @@ do_stop_tunnel() {
   else
     write_log "Tunnel is down"
   fi
+
+  ip link delete $VPN
 }
 
 monitor_ssh_tunnel() {
