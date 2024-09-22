@@ -45,13 +45,19 @@ setup_routing() {
     # Set up routes for the tables
     ip route add default via $VPN_REMOTE_IP dev $VPN table $TABLE_VPN
 
-
+    #vpn access 
     iptables -t mangle -A PREROUTING -m set --match-set $IPSET_VPN_ADDITIONAL dst -j MARK --set-mark 1
-    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+#    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
     # VPN for packets that are not in direct list and with dport=80,443  - all web traffic 
     iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
-    iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+    iptables -t mangle -A PREROUTING -m set ! --match-set $IPSET_DIRECT dst -p tcp -m multiport --dports 80,443 -j MARK --set-mark 1
+ #   iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
+
+    #use vpn gate for dns google and cloudflare    
+    iptables -A PREROUTING -t mangle -p tcp --dport 53 -m set ! --match-set $IPSET_DIRECT dst -j MARK --set-xmark 1
+    iptables -A PREROUTING -t mangle -p udp --dport 53 -m set ! --match-set $IPSET_DIRECT dst -j MARK --set-xmark 1
+ #   iptables -t mangle -A PREROUTING -m mark --mark 1 -j RETURN
 
 
     ip route flush cache
