@@ -1,6 +1,5 @@
 #!/bin/bash
 
-apt install dnsmasq -y
 
 DIR_PATH=$(dirname "$(realpath "$0")")
 source "$DIR_PATH/variables.sh"
