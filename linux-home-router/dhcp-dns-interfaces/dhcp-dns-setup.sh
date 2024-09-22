@@ -9,11 +9,11 @@ COMMON_DIR_PATH=$(dirname "$DIR_PATH")
 source "$COMMON_DIR_PATH/variables.sh"
 
 NODHCP="no-dhcp-interface=$INTERFACE_WAN"
-CONFIG_BLOCK_DHCP=${CONFIG_BLOCK_DHCP}${NODHCP}
+CONFIG_BLOCK_DHCP_DNS=${CONFIG_BLOCK_DHCP_DNS}${NODHCP}
 
 
 
-echo "$CONFIG_BLOCK_DHCP" > /etc/dnsmasq.d/router.conf
+echo "$CONFIG_BLOCK_DHCP_DNS" > /etc/dnsmasq.d/router.conf
 
 
 #Example static lease 
