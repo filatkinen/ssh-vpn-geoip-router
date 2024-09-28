@@ -22,6 +22,7 @@ iptables -Z
 iptables -X
 
 iptables -A INPUT -i tun+ -j ACCEPT
+iptables -A INPUT -i wg+ -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT -p icmp  -j ACCEPT
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT

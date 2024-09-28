@@ -10,8 +10,10 @@ wg genkey | tee privatekey | wg pubkey > publickey
 
 iptables -A INPUT -p udp --dport $REMOTE_PORT -j ACCEPT
 iptables -A INPUT -i wg+ -j ACCEPT
-iptables -A FORWARD -i wg0+ -o eth0 -j ACCEPT
-iptables -A FORWARD -i eth0 -o wg0+ -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i wg0+ -o $INTERFACE_SERVER -j ACCEPT
+iptables -A FORWARD -i $INTERFACE_SERVER -o wg0+ -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+netfilter-persistent save
 
 
 #Do not forget put keys into the /etc/wireguard/wg0.conf

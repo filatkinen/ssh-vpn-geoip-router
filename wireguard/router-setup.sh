@@ -12,8 +12,10 @@ wg genkey | tee privatekey | wg pubkey > publickey
 echo "$CONFIG_BLOCK_CLIENT" >/etc/wireguard/wg0.conf
 
 iptables -A INPUT -i wg+ -j ACCEPT
-iptables -A FORWARD -i wg+ -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i wg+ -o $INTERFACE_LOCAL_ROUTER -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptabes  -A POSTROUTING -s 192.168.0.0/16 -o wg+ -j MASQUERADE
+
+netfilter-persistent save
 
 wg-quick up wg0
 
