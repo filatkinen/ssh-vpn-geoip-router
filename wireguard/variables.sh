@@ -26,26 +26,6 @@ AllowedIPs = $VPN_LOCAL_IP/32
 
 CONFIG_BLOCK_CLIENT="
 
-
-[Interface]
-# Внутренний IP-адрес для WireGuard (вы можете выбрать другой, например, 10.0.0.2)
-Address = $VPN_LOCAL_IP/24
-# Приватный ключ сервера B (клиента)
-PrivateKey = <приватный ключ сервера B>
-# Порт, на котором будет слушать WireGuard (можно не указывать, если сервер B только инициатор)
-ListenPort = 51820
-
-[Peer]
-# Публичный ключ сервера A
-PublicKey = <публичный ключ сервера A>
-# Внутренний IP-адрес сервера A
-AllowedIPs = 192.168.100.1/32
-# Внешний IP-адрес и порт сервера A
-Endpoint = 10.0.0.1:51820
-# Поддержание соединения активным для обхода NAT
-PersistentKeepalive = 25
-
-
 [Interface]
 # IP-address  WireGuard 
 Address = $VPN_LOCAL_IP/24
