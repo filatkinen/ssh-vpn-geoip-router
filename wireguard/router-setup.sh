@@ -8,7 +8,12 @@ chmod 700 /etc/wireguard
 cd /etc/wireguard
 wg genkey | tee privatekey | wg pubkey > publickey
 
+#Do not forget put keys into the /etc/wireguard/wg0.conf
 echo "$CONFIG_BLOCK_CLIENT" >/etc/wireguard/wg0.conf
+
+iptables -A INPUT -i wg+ -j ACCEPT
+iptables -A FORWARD -i wg+ -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptabes  -A POSTROUTING -s 192.168.0.0/16 -o wg+ -j MASQUERADE
 
 wg-quick up wg0
 

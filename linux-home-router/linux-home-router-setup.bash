@@ -27,6 +27,7 @@ iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 
 iptables -t nat -A POSTROUTING -o $INTERFACE_WAN -s 192.168.0.0/16 -j MASQUERADE
 iptables -t nat -A POSTROUTING -o tun+ -s 192.168.0.0/16 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o wg+ -s 192.168.0.0/16 -j MASQUERADE
 
 iptables -A FORWARD -i $INTERFACE_LAN -j ACCEPT
 iptables -A FORWARD -i $INTERFACE_WAN -o $INTERFACE_LAN -m state --state RELATED,ESTABLISHED -j ACCEPT

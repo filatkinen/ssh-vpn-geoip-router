@@ -11,13 +11,13 @@ CONFIG_BLOCK_SERVER="
 # IP-address  WireGuard 
 Address = $VPN_REMOTE_IP/24
 # Private key server
-PrivateKey = 
+PrivateKey = <Do not forget put here key>
 # port wireguard
 ListenPort = $REMOTE_PORT
 
 [Peer]
 # Public key client
-PublicKey = 
+PublicKey = <Do not forget put here key>
 # IP address client
 AllowedIPs = $VPN_LOCAL_IP/32
 # No endpoint - server is going only to accept connections
@@ -30,11 +30,11 @@ CONFIG_BLOCK_CLIENT="
 # IP-address  WireGuard 
 Address = $VPN_LOCAL_IP/24
 # Private key server
-PrivateKey = 
+PrivateKey = <Do not forget put here key>
 
 [Peer]
 # Public key server
-PublicKey = 
+PublicKey = <Do not forget put here key>
 # IP address client
 AllowedIPs = $VPN_REMOTE_IP/32
 # No endpoint - server is going only to accept connections
