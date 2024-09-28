@@ -10,7 +10,7 @@ wg genkey | tee privatekey | wg pubkey > publickey
 
 iptables -A INPUT -p udp --dport $REMOTE_PORT -j ACCEPT
 
-echo $CONFIG_BLOCK_SERVER >/etc/wireguard/wg0.conf
+echo "$CONFIG_BLOCK_SERVER" >/etc/wireguard/wg0.conf
 
 wg-quick up wg0
 

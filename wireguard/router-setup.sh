@@ -8,7 +8,7 @@ chmod 700 /etc/wireguard
 cd /etc/wireguard
 wg genkey | tee privatekey | wg pubkey > publickey
 
-echo $CONFIG_BLOCK_CLIENT >/etc/wireguard/wg0.conf
+echo "$CONFIG_BLOCK_CLIENT" >/etc/wireguard/wg0.conf
 
 wg-quick up wg0
 
